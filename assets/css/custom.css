@@ -1,0 +1,22 @@
+.bg-dark .footer-inner.bg-white  {
+    display: none;
+     
+}
+
+.order-table:before {
+    left: -10px !important;
+}
+.order-table:after {
+    right: -10px !important;
+}
+
+div#empTable_wrapper {
+        margin: 0 auto !important;
+    text-align: center !important;
+    padding: 14px 14px 14px 0px !important;
+   
+}
+
+div#empTable_length, div#empTable_filter, div#empTable_info {
+    padding: 12px !important;
+}
