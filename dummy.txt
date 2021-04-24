@@ -1,0 +1,21 @@
+if($request == 6){
+    $id = 0;
+$update_status = 0;
+    if(isset($_POST['id'])){
+        $id = mysqli_escape_string($conn,$_POST['id']);
+    }
+
+    // Check id
+    $record = mysqli_query($conn,"SELECT id FROM category WHERE id=".$id);
+    if(mysqli_num_rows($record) > 0){
+
+        mysqli_query($conn,"UPDATE category SET status ='".$update_status."'WHERE id=".$id);
+
+        echo 1;
+        exit;
+    }else{
+        
+        echo 0;
+        exit;
+    }
+}

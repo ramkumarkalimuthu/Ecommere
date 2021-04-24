@@ -1,0 +1,39 @@
+.no-padding{
+padding: 0px;
+}
+.login-page{
+min-height: 100vh; 
+}
+.logo-admin{
+  width: 25%;
+  margin-top: 10px;
+}
+.header-sec{
+  border-bottom: 1px solid #e8e9ed;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  clear: both;
+ }
+.aside-menu {
+  height: 100vh;
+  box-shadow: 1px 0 20px rgb(0 0 0 / 8%);
+  background: #fff;
+  margin-top: 2px;
+  border: 1px solid rgba(0,0,0,.125);
+}
+.btn.focus, .btn:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.menu-titles
+{
+  box-shadow: 1px 0 20px rgb(0 0 0 / 8%);
+  background: #fff;
+  margin-top: 5px;
+}
+.menu-data{
+  box-shadow: 1px 0 20px rgb(0 0 0 / 8%);
+  background: #fff;
+  margin-top: 5px;
+}

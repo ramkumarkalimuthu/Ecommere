@@ -3,7 +3,44 @@ include "config.php";
 include "header.php";
 include "menu.php";
    ?>
-     <div class='container'>
+
+
+<div class="data-field col-xl-10 col-lg-10 col-md-10 col-sm-10 col-12">
+
+    <div class="card menu-titles">
+        <div class="card-body">User Master</div>
+    </div>
+    <div class="card menu-data">
+        <div class="card-body">
+            <!-- Table -->
+            <table id='userTable' class='display dataTable' width='100%'>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>User ID</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+            </table>
+
+
+
+
+        </div>
+    </div>
+
+
+
+
+</div>
+
+
+
+</div>
+</div>
 
 <!-- Modal -->
 <div id="updateModal" class="modal fade" role="dialog">
@@ -17,19 +54,19 @@ include "menu.php";
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="name" >Name</label>
-                    <input type="text" class="form-control" id="firstname" placeholder="Enter Firstname" required>            
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="firstname" placeholder="Enter Firstname" required>
                 </div>
                 <div class="form-group">
-                    <label for="email" >Email</label>    
-                    <input type="email" class="form-control" id="email"  placeholder="Enter email">                          
-                </div>      
-               
-                <div class="form-group">
-                    <label for="Mobile" >Mobile</label>    
-                    <input type="text" class="form-control" id="mobile"  placeholder="Enter Mobile">                          
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter email">
                 </div>
-                
+
+                <div class="form-group">
+                    <label for="Mobile">Mobile</label>
+                    <input type="text" class="form-control" id="mobile" placeholder="Enter Mobile">
+                </div>
+
             </div>
             <div class="modal-footer">
                 <input type="hidden" id="txt_userid" value="0">
@@ -40,142 +77,145 @@ include "menu.php";
 
     </div>
 </div>
+<script>
+$(document).ready(function() {
 
-<!-- Table -->
-<table id='userTable' class='display dataTable' width='100%'>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Mobile</th>
-            <th>User ID</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    
-</table>
+    // DataTable
+    var userDataTable = $('#userTable').DataTable({
+        'processing': true,
+        'serverSide': true,
+        'serverMethod': 'post',
+        'ajax': {
+            'url': 'curduser.php'
+        },
+        'columns': [{
+                data: 'firstname'
+            },
+            {
+                data: 'email'
+            },
+            {
+                data: 'mobile'
+            },
+            {
+                data: 'user_id'
+            },
+            {
+                data: 'action'
+            },
+        ]
+    });
 
-</div>
-       
 
-        <script>
-        $(document).ready(function(){
+    // Update record
+    $('#userTable').on('click', '.updateUser', function() {
+        var id = $(this).data('id');
 
-            // DataTable
-            var userDataTable = $('#userTable').DataTable({
-                'processing': true,
-                'serverSide': true,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url':'curduser.php'
+        $('#txt_userid').val(id);
+
+        // AJAX request
+        $.ajax({
+            url: 'curduser.php',
+            type: 'post',
+            data: {
+                request: 2,
+                id: id
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status == 1) {
+
+                    $('#firstname').val(response.data.firstname);
+                    $('#email').val(response.data.email);
+                    $('#mobile').val(response.data.mobile);
+
+                } else {
+                    alert("Invalid ID.");
+                }
+            }
+        });
+
+    });
+
+
+    // Save user 
+    $('#btn_save').click(function() {
+        var id = $('#txt_userid').val();
+
+        var firstname = $('#firstname').val().trim();
+        var email = $('#email').val().trim();
+        var mobile = $('#mobile').val().trim();
+
+        if (firstname != '' && email != '' && mobile != '') {
+
+            // AJAX request
+            $.ajax({
+                url: 'curduser.php',
+                type: 'post',
+                data: {
+                    request: 3,
+                    id: id,
+                    firstname: firstname,
+                    email: email,
+                    mobile: mobile
                 },
-                'columns': [
-                    { data: 'firstname' },
-                    { data: 'email' },
-                    { data: 'mobile' },
-                    { data: 'user_id' },
-                    { data: 'action' },
-                ]
-            });
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == 1) {
+                        alert(response.message);
 
-
-            // Update record
-            $('#userTable').on('click','.updateUser',function(){
-                var id = $(this).data('id');
-
-                $('#txt_userid').val(id);
-
-                // AJAX request
-                $.ajax({
-                    url: 'curduser.php',
-                    type: 'post',
-                    data: {request: 2, id: id},
-                    dataType: 'json',
-                    success: function(response){
-                        if(response.status == 1){
-
-                            $('#firstname').val(response.data.firstname);
-                            $('#email').val(response.data.email);
-                            $('#mobile').val(response.data.mobile);
-                         
-                        }else{
-                            alert("Invalid ID.");
-                        }
+                        // Empty the fields
+                        $('#firstname', '#email', '#mobile').val('');
+                        $('#txt_userid').val(0);
+                        // Reload DataTable
+                        userDataTable.ajax.reload();
+                        // Close modal
+                        $('#updateModal').modal('toggle');
+                    } else {
+                        alert(response.message);
                     }
-                });
-
-            });
-
-
-            // Save user 
-            $('#btn_save').click(function(){
-                var id = $('#txt_userid').val();
-
-                var firstname = $('#firstname').val().trim();
-                var email = $('#email').val().trim();
-                var mobile = $('#mobile').val().trim();
-
-                if(firstname !='' && email != '' && mobile != ''){
-
-                    // AJAX request
-                    $.ajax({
-                        url: 'curduser.php',
-                        type: 'post',
-                        data: {request: 3, id: id,firstname: firstname, email: email, mobile: mobile},
-                        dataType: 'json',
-                        success: function(response){
-                            if(response.status == 1){
-                                alert(response.message);
-
-                                // Empty the fields
-                                $('#firstname','#email','#mobile').val('');
-                                $('#txt_userid').val(0);
-                                // Reload DataTable
-                                userDataTable.ajax.reload();
-                                // Close modal
-                                $('#updateModal').modal('toggle');
-                            }else{
-                                alert(response.message);
-                            }
-                        }
-                    });
-
-                }else{
-                    alert('Please fill all fields.');
                 }
             });
 
+        } else {
+            alert('Please fill all fields.');
+        }
+    });
 
-            // Delete record
-            $('#userTable').on('click','.deleteUser',function(){
-                var id = $(this).data('id');
 
-                var deleteConfirm = confirm("Are you sure?");
-                if (deleteConfirm == true) {
-                    // AJAX request
-                    $.ajax({
-                        url: 'curduser.php',
-                        type: 'post',
-                        data: {request: 4, id: id},
-                        success: function(response){
+    // Delete record
+    $('#userTable').on('click', '.deleteUser', function() {
+        var id = $(this).data('id');
 
-                            if(response == 1){
-                                alert("Record deleted.");
+        var deleteConfirm = confirm("Are you sure?");
+        if (deleteConfirm == true) {
+            // AJAX request
+            $.ajax({
+                url: 'curduser.php',
+                type: 'post',
+                data: {
+                    request: 4,
+                    id: id
+                },
+                success: function(response) {
 
-                                // Reload DataTable
-                                userDataTable.ajax.reload();
-                            }else{
-                                alert("Invalid ID.");
-                            }
-                            
-                        }
-                    });
-                } 
-                
+                    if (response == 1) {
+                        alert("Record deleted.");
+
+                        // Reload DataTable
+                        userDataTable.ajax.reload();
+                    } else {
+                        alert("Invalid ID.");
+                    }
+
+                }
             });
-        });
-        </script>
+        }
 
-         <?php
-         include "footer.php";
-         ?>
+    });
+});
+</script>
+
+</body>
+
+</html>
